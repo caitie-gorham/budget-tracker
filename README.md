@@ -12,6 +12,7 @@
 
 ## Overview
 
+This budgeting application allows users to enter incoming and outgoing expenses in a tracker and see their account total over time. The application allows users to enter data online and offline without lsing any information. 
 
 ![Alt text](./Assets/Homepage.png?raw=true "Homepage")
 
