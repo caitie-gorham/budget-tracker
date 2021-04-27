@@ -3,13 +3,13 @@ const RUNTIME_CACHE = "data-cache-v1"
 
 const FILES_TO_CACHE = [
     "/",
-     "/index.html",
-     "/index.js",
-     "/db.js",
-     "/styles.css",
-     "/manifest.webmanifest",
-     "/icons/icon-192x192.png",
-     "/icons/icon-512x512.png"
+     "./index.html",
+     "./index.js",
+     "./db.js",
+     "./styles.css",
+     "./manifest.webmanifest",
+     "./icons/icon-192x192.png",
+     "./icons/icon-512x512.png"
   ];
   
   self.addEventListener('install', function(event) {
@@ -44,8 +44,7 @@ const FILES_TO_CACHE = [
   self.addEventListener("fetch", function(event) {
     // non GET requests are not cached and requests to other origins are not cached
     if (
-      event.request.method !== "GET" ||
-      !event.request.url.startsWith(self.location.origin)
+      event.request.method !== "GET" || !event.request.url.startsWith(self.location.origin)
     ) {
       event.respondWith(fetch(event.request));
       return;
@@ -58,7 +57,6 @@ const FILES_TO_CACHE = [
         caches.open(RUNTIME_CACHE).then(cache => {
           return fetch(event.request)
             .then(response => {
-              cache.put(event.request, response.clone());
               if (response.status === 200) {
                 cache.put(event.request, response.clone());
               };

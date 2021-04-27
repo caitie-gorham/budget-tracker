@@ -54,11 +54,9 @@
   <script type="text/javascript">
     (function () {
       if ("serviceWorker" in navigator) {
-        navigator.serviceWorker.register("service-worker.js", { scope: "/" })
-        // registration was successful
-          .then(() => console.log('ServiceWorker registration successful with scope: ' , registration.scope))
-          // registration was unsuccessful
-          .catch(error => console.log('ServiceWorker registration failed: ', err));
+        navigator.serviceWorker.register("/service-worker.js", { scope: "/" })
+          .then(() => console.log("ServiceWorker registered successfully."))
+          .catch(error => console.log("ServiceWorker registration failed:", error));
       }
     })();
   </script>
