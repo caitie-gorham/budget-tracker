@@ -1,38 +1,40 @@
 const STATIC_CACHE = "static-cache-v2";
-const RUNTIME_CACHE = "data-cache-v1"
+const RUNTIME_CACHE = "data-cache-v1";
 
 const FILES_TO_CACHE = [
-    "/",
-     "./index.html",
-     "./index.js",
-     "./db.js",
-     "./styles.css",
-     "./manifest.webmanifest",
-     "./icons/icon-192x192.png",
-     "./icons/icon-512x512.png"
-  ];
+  "/",
+  "./index.html",
+  "./index.js",
+  "./db.js",
+  "./styles.css",
+  "./manifest.webmanifest",
+  "./icons/icon-192x192.png",
+  "./icons/icon-512x512.png"
+];
   
-  self.addEventListener('install', function(event) {
-    event.waitUntil(
-      caches
-        .open(STATIC_CACHE)
-        .then((cache) => cache.addAll(FILES_TO_CACHE))
-        .then(self.skipWaiting())
-    );
-  });
+self.addEventListener("install", function(event) {
+  event.waitUntil(
+    caches
+      .open(STATIC_CACHE)
+      .then(cache => cache.addAll(FILES_TO_CACHE))
+      .then(() => self.skipWaiting())
+  );
+});
   
   // The activate handler takes care of cleaning up old caches.
-  self.addEventListener('activate', function(event) {
+  self.addEventListener("activate", function(event) {
     const currentCaches = [STATIC_CACHE, RUNTIME_CACHE];
     event.waitUntil(
       caches
         .keys()
-        .then((cacheNames) => {
-          return cacheNames.filter((cacheName) => !currentCaches.includes(cacheName));
+        .then(cacheNames => {
+          return cacheNames.filter(
+            cacheName => !currentCaches.includes(cacheName)
+          );
         })
-        .then((cachesToDelete) => {
+        .then(cachesToDelete => {
           return Promise.all(
-            cachesToDelete.map((cacheToDelete) => {
+            cachesToDelete.map(cacheToDelete => {
               return caches.delete(cacheToDelete);
             })
           );
@@ -44,22 +46,24 @@ const FILES_TO_CACHE = [
   self.addEventListener("fetch", function(event) {
     // non GET requests are not cached and requests to other origins are not cached
     if (
-      event.request.method !== "GET" || !event.request.url.startsWith(self.location.origin)
+      event.request.method !== "GET" ||
+      !event.request.url.startsWith(self.location.origin)
     ) {
       event.respondWith(fetch(event.request));
       return;
-    };
+    }
   
     // handle runtime GET requests for data from /api routes
     if (event.request.url.includes("/api/transaction")) {
       // make network request and fallback to cache if network request fails (offline)
       event.respondWith(
-        caches.open(RUNTIME_CACHE).then(cache => {
+        caches.open(RUNTIME_CACHE).then(cache => {  
           return fetch(event.request)
             .then(response => {
+
               if (response.status === 200) {
                 cache.put(event.request, response.clone());
-              };
+              }
               return response;
             })
             .catch(() => caches.match(event.request));
